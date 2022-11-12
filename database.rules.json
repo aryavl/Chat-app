@@ -1,0 +1,32 @@
+
+{
+  "rules": {
+ "profiles":{
+      "$user_id":{
+        ".read":"$user_id === auth.uid",
+        ".write":"$user_id === auth.uid"
+      }
+    },
+      "rooms":{
+      ".read":"auth !== null",
+      ".write":"auth !== null",
+      "$room_id":{
+        ".read":"auth !== null",
+        ".write":"auth !== null"
+      }
+    },
+       "messages":{
+      ".read":"auth !== null",
+      ".write":"auth !== null",
+
+      "$message_id":{
+        ".indexOn": "authour/uid",
+        ".read":"auth !== null",
+        ".write":"auth !== null"
+      }
+    },
+
+    ".read": "now < 1667845800000",
+    ".write": "now < 1667845800000"
+  }
+}
