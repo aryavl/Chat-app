@@ -28,13 +28,14 @@ const MessageItem = ({ message }) => {
           size="xs"
         />
 
-        <span  >{authour.name}</span>
-        </Box>
+        {/* <span  >{authour.name}</span> */}
         <ProfileInfoBtnModal
           profile={authour}
           appearance="link"
           className="p-0 ml-1 text-black"
         />
+        </Box>
+
         <TimeAgo
           datetime={createdAt}
           style={{

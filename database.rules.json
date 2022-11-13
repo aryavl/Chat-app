@@ -16,15 +16,23 @@
       }
     },
        "messages":{
+         ".indexOn": "roomId",
       ".read":"auth !== null",
       ".write":"auth !== null",
 
       "$message_id":{
-        ".indexOn": "authour/uid",
+
         ".read":"auth !== null",
         ".write":"auth !== null"
       }
     },
+       "status":{
+      "$user_id":{
+        ".read":"$user_id === auth.uid",
+        ".write":"$user_id === auth.uid"
+      }
+    },
+
 
     ".read": "now < 1667845800000",
     ".write": "now < 1667845800000"

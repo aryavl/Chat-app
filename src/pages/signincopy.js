@@ -18,10 +18,11 @@ import { auth , database, writeUserData} from '../misc/firebase'
 import { useEffect } from 'react'
 import {useDispatch} from 'react-redux'
 import { profileActions } from '../store/profileSlice'
-import {useSelector} from 'react-redux'
+//import {useSelector} from 'react-redux'
 import {   off, onDisconnect, onValue, ref, serverTimestamp, set } from 'firebase/database'
 
-export const isOfflineForDatabase = {
+
+const isOfflineForDatabase = {
     state: 'offline',
     last_changed: serverTimestamp(),
 };
@@ -30,9 +31,8 @@ const isOnlineForDatabase = {
     state: 'online',
     last_changed: serverTimestamp(),
 };
-
 const SignIn = () => {
-const profile=useSelector(state=>state.profile.profile)
+//const profile=useSelector(state=>state.profile.profile)
 // const isLoading=useSelector(state=>state.profile.isLoading)
     const dispatch=useDispatch()
 
@@ -41,11 +41,10 @@ const profile=useSelector(state=>state.profile.profile)
     useEffect(()=>{ 
         let  userRef
         let userStatusRef
-        
         const authUnsub = onAuthStateChanged(auth, async authObj => {
-            if (authObj) {  
-          userRef = ref(database, `/profile/${authObj.uid}`);
-          userStatusRef=ref(database,`/status/${authObj.uid}`)
+            if (authObj) { 
+                userStatusRef = ref(database, `/status/${authObj.uid}`);
+                userRef = ref(database, `/profiles/${authObj.uid}`);
             onValue(userRef, snap => {
                 if(snap.exists()){
 
@@ -59,29 +58,32 @@ const profile=useSelector(state=>state.profile.profile)
                             uid:authObj.uid,
                             email:authObj.email
                 }))
-               dispatch(profileActions.setIsLoading(true))
+               dispatch(profileActions.setIsLoading(false))
                 }
-            })  
-            onValue(ref(database,'.info/connected'),snapshot=>  {
-                if(!!snapshot.val() === false){
-                    return
+            }) 
+            
+            onValue(ref(database, '.info/connected'), snapshot => {
+                if (!!snapshot.val() === false) {
+                  return;
                 }
                 onDisconnect(userStatusRef)
                 .set(isOfflineForDatabase)
-                .then(()=>{
-                    set(userStatusRef,isOnlineForDatabase)
-                })
-            })
+                .then(() => {
+                    set(userStatusRef, isOnlineForDatabase);
+                });
+            });
+           
+          
             
         }else{
             
             if (userRef) {
                 off(userRef);
               }
-              if(userStatusRef){
+            if(userStatusRef){
                 off(userStatusRef)
-              }
-              off(ref(database,'.info/connected'))
+            }
+            off(ref(database, '.info/connected'));
             dispatch(profileActions.setProfile(null))
             
             dispatch(profileActions.setIsLoading(false))
@@ -89,9 +91,11 @@ const profile=useSelector(state=>state.profile.profile)
         }
     
     })
+    
     return ()=>{
         authUnsub()
-        off(ref(database,'.info/connected'))
+        // off(ref(database, '.info/connected'));
+
         if (userRef) {
             off(userRef);
           }
